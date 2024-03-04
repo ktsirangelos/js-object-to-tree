@@ -14,13 +14,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ktsirangelos/object-to-tree"
+    "url": "git+https://github.com/ktsirangelos/object-to-tree.git"
   },
   "keywords": [
     "ktsirangelos",
     "object to tree"
   ],
-  "author": "Konstantinos Tsirangelos",
+  "author": "ktsirangelos@proton.me",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.5.12",
