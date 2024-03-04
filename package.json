@@ -1,8 +1,8 @@
 {
   "name": "js-object-to-tree",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A recursive function that receives a JavaScript object and creates a visual tree-like representation of it.",
-  "main": "objectToTree.ts",
+  "main": "./src/objectToTree.ts",
   "files": [
     "src/"
   ],

@@ -1,3 +1,11 @@
+/**
+ * Converts a JavaScript object into a visual tree-like representation.
+ * @param {Object} object - The JavaScript object to convert into a tree.
+ * @returns {string} The visual representation of the object as a tree.
+ * @throws {Error} If the input object is not a non-null object,
+ *                 if keys in the input object are not unique,
+ *                 or if the value for any key is neither an object nor null.
+ */
 export const objectToTree = function (
   object: { [key: string]: any },
   prefix = "",
