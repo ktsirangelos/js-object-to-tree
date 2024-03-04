@@ -1,5 +1,5 @@
 import { expect, test } from "@jest/globals";
-import { objectToTree } from "./";
+import { objectToTree } from "../src/objectToTree";
 
 test("objectToTree function correctly converts object to tree format", () => {
   const inputObject = {
