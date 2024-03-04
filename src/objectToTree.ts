@@ -27,7 +27,9 @@ export const objectToTree = function (
       try {
         tree += objectToTree(object[key], childPrefix, false);
       } catch (error) {
-        throw new Error(`Error processing key '${key}': ${error.message}`);
+        throw new Error(
+          `Error processing key '${key}': ${(error as Error).message}`,
+        );
       }
     } else if (object[key] !== null) {
       throw new Error(
