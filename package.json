@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A recursive function that receives a JavaScript object and creates a visual tree-like representation of it.",
   "main": "objectToTree.ts",
+  "files": [
+    "src/"
+  ],
   "scripts": {
     "test": "jest"
   },
