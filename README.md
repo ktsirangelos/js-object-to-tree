@@ -1,4 +1,4 @@
-# Object to Tree
+# JS Object to Tree
 
 A utility function to convert JavaScript objects into visually-formatted tree structures.
 
