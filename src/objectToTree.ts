@@ -1,23 +1,25 @@
 /**
  * Converts a JavaScript object into a visual tree-like representation.
- * @param {Object} object - The JavaScript object to convert into a tree.
- * @returns {string} The visual representation of the object as a tree.
- * @throws {Error} If the input object is not a non-null object,
- *                 if keys in the input object are not unique,
- *                 or if the value for any key is neither an object nor null.
+ * @param inputObject - The JavaScript object to convert into a tree.
+ * @param linePrefix - The prefix to use for each line in the tree.
+ * @param isRootNode - Whether the current object is the root node.
+ * @returns The visual representation of the object as a tree.
+ * @throws If the input object is not a non-null object,
+ *         if keys in the input object are not unique,
+ *         or if the value for any key is neither an object nor null.
  */
 export const objectToTree = function (
-  object: { [key: string]: any },
-  prefix = "",
-  isRoot = true,
+  inputObject: { [key: string]: any },
+  linePrefix = "",
+  isRootNode = true,
 ): string {
   let tree = "";
 
-  if (typeof object !== "object" || object === null) {
+  if (typeof inputObject !== "object" || inputObject === null) {
     throw new Error("Input object must be a non-null object");
   }
 
-  const currentKeys = Object.keys(object);
+  const currentKeys = Object.keys(inputObject);
 
   const uniqueKeys = new Set(currentKeys);
   if (uniqueKeys.size !== currentKeys.length) {
@@ -27,19 +29,21 @@ export const objectToTree = function (
   currentKeys.forEach((key, index) => {
     const isLast = index === currentKeys.length - 1;
 
-    tree += `${prefix}${isRoot ? "" : isLast ? "└── " : "├── "}${key}\n`;
+    tree += `${linePrefix}${isRootNode ? "" : isLast ? "└── " : "├── "}${key}\n`;
 
-    if (object[key] !== null && typeof object[key] === "object") {
-      let childPrefix = isRoot ? prefix : prefix + (isLast ? "    " : "│   ");
+    if (inputObject[key] !== null && typeof inputObject[key] === "object") {
+      let childPrefix = isRootNode
+        ? linePrefix
+        : linePrefix + (isLast ? "    " : "│   ");
 
       try {
-        tree += objectToTree(object[key], childPrefix, false);
+        tree += objectToTree(inputObject[key], childPrefix, false);
       } catch (error) {
         throw new Error(
           `Error processing key '${key}': ${(error as Error).message}`,
         );
       }
-    } else if (object[key] !== null) {
+    } else if (inputObject[key] !== null) {
       throw new Error(
         `Value for key '${key}' must be either an object or null`,
       );
