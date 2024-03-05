@@ -1,5 +1,13 @@
 import { expect, test } from "@jest/globals";
-import { objectToTree } from "../src/objectToTree";
+import { objectToTree, TreeNode } from "../src/objectToTree";
+
+test("throws error for input: array", () => {
+  const inputObject = [1, 2, 3];
+
+  expect(() => {
+    objectToTree(inputObject as any);
+  }).toThrow("Arrays are not allowed as input");
+});
 
 test("throws error for input: non-object", () => {
   const inputObject = "not an object";
@@ -17,33 +25,25 @@ test("throws error for input: null", () => {
   }).toThrow("Input object must be a non-null object");
 });
 
-test("throws error for input: array", () => {
-  const inputObject = [1, 2, 3];
-
-  expect(() => {
-    objectToTree(inputObject);
-  }).toThrow("Arrays are not allowed as input");
-});
-
 test("throws error for non-object or non-null value", () => {
   const inputObject = {
     root: "not an object or not null",
   };
 
   expect(() => {
-    objectToTree(inputObject);
+    objectToTree(inputObject as any);
   }).toThrow("Value for key 'root' must be either an object or null");
 });
 
 test("handles an empty object", () => {
-  const inputObject = {};
+  const inputObject: TreeNode = {};
   const expectedOutput = "";
 
   expect(objectToTree(inputObject)).toBe(expectedOutput);
 });
 
 test("generates correct tree for root without branches or leaves", () => {
-  const inputObject = {
+  const inputObject: TreeNode = {
     root: null,
   };
 
@@ -54,7 +54,7 @@ test("generates correct tree for root without branches or leaves", () => {
 });
 
 test("generates correct tree for root with branch and leaf", () => {
-  const inputObject = {
+  const inputObject: TreeNode = {
     root: {
       branch: null,
       leaf: null,
@@ -70,7 +70,7 @@ test("generates correct tree for root with branch and leaf", () => {
 });
 
 test("generates correct tree for root with branch of branch and leaf of branch", () => {
-  const inputObject = {
+  const inputObject: TreeNode = {
     root: {
       branch: { "branch of branch": null, "leaf of branch": null },
       leaf: null,
@@ -88,7 +88,7 @@ test("generates correct tree for root with branch of branch and leaf of branch",
 });
 
 test("generates correct tree for root with branch of leaf and leaf of leaf", () => {
-  const inputObject = {
+  const inputObject: TreeNode = {
     root: {
       leaf: { "branch of leaf": null, "leaf of leaf": null },
     },
@@ -104,7 +104,7 @@ test("generates correct tree for root with branch of leaf and leaf of leaf", () 
 });
 
 test("generates correct tree for real world scenario", () => {
-  const inputObject = {
+  const inputObject: TreeNode = {
     "Stack 2/3": {
       "Data Stores": {
         Postgres: {

@@ -1,3 +1,7 @@
+export type TreeNode = {
+  [key: string]: null | TreeNode;
+} | null;
+
 /**
  * Converts a JavaScript object into a visual tree-like representation.
  * @param inputObject - The JavaScript object to convert into a tree.
@@ -9,16 +13,16 @@
  *         or if the value for any key is neither an object nor null.
  */
 export const objectToTree = function (
-  inputObject: { [key: string]: any },
+  inputObject: TreeNode,
   linePrefix = "",
   isRootNode = true,
 ): string {
-  if (typeof inputObject !== "object" || inputObject === null) {
-    throw new Error("Input object must be a non-null object");
-  }
-
   if (Array.isArray(inputObject)) {
     throw new Error("Arrays are not allowed as input");
+  }
+
+  if (typeof inputObject !== "object" || inputObject === null) {
+    throw new Error("Input object must be a non-null object");
   }
 
   let tree = "";
