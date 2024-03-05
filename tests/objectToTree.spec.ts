@@ -1,105 +1,161 @@
 import { expect, test } from "@jest/globals";
 import { objectToTree } from "../src/objectToTree";
 
-test("objectToTree function correctly converts object to tree format", () => {
-  const inputObject = {
-    a: {
-      b: {
-        c: null,
-        d: {
-          e: null,
-        },
-      },
-      f: null,
-    },
-  };
-
-  const expectedOutput = `a
-├── b
-│   ├── c
-│   └── d
-│       └── e
-└── f
-`;
-
-  expect(objectToTree(inputObject)).toBe(expectedOutput);
-});
-
-test("objectToTree throws error for non-object input", () => {
-  // Non-object input
+test("throws error for input: non-object", () => {
   const inputObject = "not an object";
 
   expect(() => {
-    objectToTree(inputObject as any); // Casting to any to bypass TypeScript error
+    objectToTree(inputObject as any);
   }).toThrow("Input object must be a non-null object");
 });
 
-test("objectToTree throws error for non-object or null value", () => {
-  // Non-object or null value
+test("throws error for input: null", () => {
+  const inputObject = null;
+
+  expect(() => {
+    objectToTree(inputObject as any);
+  }).toThrow("Input object must be a non-null object");
+});
+
+test("throws error for input: array", () => {
+  const inputObject = [1, 2, 3];
+
+  expect(() => {
+    objectToTree(inputObject);
+  }).toThrow("Arrays are not allowed as input");
+});
+
+test("throws error for non-object or non-null value", () => {
   const inputObject = {
-    a: "not an object or null",
+    root: "not an object or not null",
   };
 
   expect(() => {
     objectToTree(inputObject);
-  }).toThrow("Value for key 'a' must be either an object or null");
+  }).toThrow("Value for key 'root' must be either an object or null");
 });
 
-test("objectToTree generates correct tree for root with branches and leaves", () => {
-  // Root with branches and leaves
+test("handles an empty object", () => {
+  const inputObject = {};
+  const expectedOutput = "";
+
+  expect(objectToTree(inputObject)).toBe(expectedOutput);
+});
+
+test("generates correct tree for root without branches or leaves", () => {
   const inputObject = {
-    root: {
-      branch1: null,
-      branch2: {
-        leaf1: null,
-      },
-    },
+    root: null,
   };
 
   const expectedOutput = `root
-├── branch1
-└── branch2
-    └── leaf1
 `;
 
   expect(objectToTree(inputObject)).toBe(expectedOutput);
 });
 
-test("objectToTree generates correct tree for root with nested branches and leaves", () => {
-  // Root with nested branches and leaves
+test("generates correct tree for root with branch and leaf", () => {
   const inputObject = {
     root: {
-      branch1: {
-        branchOfBranch1: null,
-      },
-      leaf1: null,
+      branch: null,
+      leaf: null,
     },
   };
 
   const expectedOutput = `root
-├── branch1
-│   └── branchOfBranch1
-└── leaf1
+├── branch
+└── leaf
 `;
 
   expect(objectToTree(inputObject)).toBe(expectedOutput);
 });
 
-test("objectToTree generates correct tree for root with nested leaves", () => {
-  // Root with nested leaves
+test("generates correct tree for root with branch of branch and leaf of branch", () => {
   const inputObject = {
     root: {
-      leaf1: {
-        branchOfLeaf1: null,
-      },
-      leaf2: null,
+      branch: { "branch of branch": null, "leaf of branch": null },
+      leaf: null,
     },
   };
 
   const expectedOutput = `root
-├── leaf1
-│   └── branchOfLeaf1
-└── leaf2
+├── branch
+│   ├── branch of branch
+│   └── leaf of branch
+└── leaf
+`;
+
+  expect(objectToTree(inputObject)).toBe(expectedOutput);
+});
+
+test("generates correct tree for root with branch of leaf and leaf of leaf", () => {
+  const inputObject = {
+    root: {
+      leaf: { "branch of leaf": null, "leaf of leaf": null },
+    },
+  };
+
+  const expectedOutput = `root
+└── leaf
+    ├── branch of leaf
+    └── leaf of leaf
+`;
+
+  expect(objectToTree(inputObject)).toBe(expectedOutput);
+});
+
+test("generates correct tree for real world scenario", () => {
+  const inputObject = {
+    "Stack 2/3": {
+      "Data Stores": {
+        Postgres: {
+          Sequelize: null,
+        },
+        MongoDB: {
+          Mongoose: null,
+        },
+        Redis: null,
+      },
+      Processes: {
+        Agile: {
+          Scrum: null,
+        },
+        Scripting: null,
+        Engineering: null,
+        Design: null,
+        "Code Reviews": null,
+        Testing: null,
+        "CI/CD": null,
+        TDD: null,
+        Git: {
+          Gitflow: null,
+          GitHub: null,
+          GitLab: null,
+        },
+      },
+    },
+  };
+
+  const expectedOutput = `Stack 2/3
+├── Data Stores
+│   ├── Postgres
+│   │   └── Sequelize
+│   ├── MongoDB
+│   │   └── Mongoose
+│   └── Redis
+└── Processes
+    ├── Agile
+    │   └── Scrum
+    ├── Scripting
+    ├── Engineering
+    ├── Design
+    ├── Code Reviews
+    ├── Testing
+    ├── CI/CD
+    ├── TDD
+    └── Git
+        ├── Gitflow
+        ├── GitHub
+        └── GitLab
 `;
 
   expect(objectToTree(inputObject)).toBe(expectedOutput);

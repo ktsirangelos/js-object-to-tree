@@ -46,8 +46,8 @@ console.log(exampleTree)
 
 ## Input Object Format
 
-- Unique Keys: All keys within the object must be unique.
-- Object or Null Values: The values associated with keys must either be objects (for nested structures) or null.
+- Keys: Must be strings. JavaScript/TypeScript automatically ensure that keys within an object are unique.
+- Values: Must be either objects or null. Other primitive types (string, number, boolean, etc.) are not allowed.
 
 ## Information
 

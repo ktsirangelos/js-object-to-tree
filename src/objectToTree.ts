@@ -13,18 +13,16 @@ export const objectToTree = function (
   linePrefix = "",
   isRootNode = true,
 ): string {
-  let tree = "";
-
   if (typeof inputObject !== "object" || inputObject === null) {
     throw new Error("Input object must be a non-null object");
   }
 
-  const currentKeys = Object.keys(inputObject);
-
-  const uniqueKeys = new Set(currentKeys);
-  if (uniqueKeys.size !== currentKeys.length) {
-    throw new Error("Keys in the input object must be unique");
+  if (Array.isArray(inputObject)) {
+    throw new Error("Arrays are not allowed as input");
   }
+
+  let tree = "";
+  const currentKeys = Object.keys(inputObject);
 
   currentKeys.forEach((key, index) => {
     const isLast = index === currentKeys.length - 1;
