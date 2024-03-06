@@ -1,6 +1,6 @@
 {
   "name": "js-object-to-tree",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A recursive function that receives a JavaScript object and creates a visual tree-like representation of it.",
   "main": "./src/objectToTree.ts",
   "files": [
@@ -21,7 +21,7 @@
     "object"
   ],
   "author": "ktsirangelos@proton.me",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
