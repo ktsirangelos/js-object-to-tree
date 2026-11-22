@@ -5,7 +5,7 @@ A utility function to convert JavaScript objects into visually-formatted tree st
 ## Features
 
 - Clear tree visualization: Provides an easy-to-read representation of nested object structures.
-- Error handling: Validates input data and offers informative error messages for potential issues (duplicate keys, non-object values).
+- Error handling: Validates input data and offers informative error messages for potential issues (arrays, non-object values).
 - Flexibility: Works with objects of varying complexity and depth.
 
 ## Installation
@@ -17,9 +17,10 @@ $ npm i js-object-to-tree
 ## Usage
 
 ```typescript
-import { objectToTree } from ('js-object-to-tree');
+import { objectToTree } from 'js-object-to-tree';
+// or, with CommonJS: const { objectToTree } = require('js-object-to-tree');
 
-const exampleObject= {
+const exampleObject = {
   "a": {
     "b": {
       "c": null,
