@@ -8,8 +8,7 @@ export type TreeNode = {
  * @param linePrefix - The prefix to use for each line in the tree.
  * @param isRootNode - Whether the current object is the root node.
  * @returns The visual representation of the object as a tree.
- * @throws If the input object is not a non-null object,
- *         if keys in the input object are not unique,
+ * @throws If the input object is an array or not a non-null object,
  *         or if the value for any key is neither an object nor null.
  */
 export const objectToTree = function (
