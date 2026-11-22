@@ -5,8 +5,9 @@ A utility function to convert JavaScript objects into visually-formatted tree st
 ## Features
 
 - Clear tree visualization: Provides an easy-to-read representation of nested object structures.
-- Error handling: Validates input data and offers informative error messages for potential issues (arrays, non-object values).
+- Error handling: Throws a `TypeError` naming the key path of invalid values and circular references.
 - Flexibility: Works with objects of varying complexity and depth.
+- Typed: Ships TypeScript declarations (`TreeObject`, `TreeNode`).
 
 ## Installation
 
@@ -26,7 +27,7 @@ const exampleObject = {
       "c": null,
       "d": {
         "e": null
-      },
+      }
     },
     "f": null
   }
@@ -34,9 +35,9 @@ const exampleObject = {
 
 const exampleTree = objectToTree(exampleObject);
 
-console.log(exampleTree)
+console.log(exampleTree);
 
-// Expected Output:
+// Output:
 // a
 // ├── b
 // │   ├── c
@@ -47,8 +48,11 @@ console.log(exampleTree)
 
 ## Input Object Format
 
-- Keys: Must be strings. JavaScript/TypeScript automatically ensure that keys within an object are unique.
-- Values: Must be either objects or null. Other primitive types (string, number, boolean, etc.) are not allowed.
+- The input and every non-`null` value must be a plain object. Anything else (arrays, primitives, `Map`, `Set`, `Date`, ...) throws a `TypeError`. For nested values the message names the key path, e.g. `Value for key 'a.b' must be a plain object or null`; keys that aren't identifiers are bracketed, e.g. `a["b.c"]`.
+- Circular references throw `Circular reference at key 'a.self'`.
+- Keys appear in `Object.keys` order.
+- Keys are printed as-is, so sanitize untrusted input.
+- Each line ends in `\n`, and `{}` returns `""`.
 
 ## Information
 
