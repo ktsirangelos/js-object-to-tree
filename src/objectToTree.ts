@@ -1,55 +1,60 @@
-export type TreeNode = {
-  [key: string]: null | TreeNode;
-} | null;
+export type TreeObject = { [key: string]: TreeNode };
+export type TreeNode = TreeObject | null;
 
 /**
- * Converts a JavaScript object into a visual tree-like representation.
- * @param inputObject - The JavaScript object to convert into a tree.
- * @param linePrefix - The prefix to use for each line in the tree.
- * @param isRootNode - Whether the current object is the root node.
- * @returns The visual representation of the object as a tree.
- * @throws If the input object is an array or not a non-null object,
- *         or if the value for any key is neither an object nor null.
+ * Recursively converts an object into a tree-like string, one line per key.
+ * @throws {TypeError} If the input or any value is not a plain object (values may also be `null`),
+ *         or if the object contains a circular reference.
  */
-export const objectToTree = function (
-  inputObject: TreeNode,
-  linePrefix = "",
-  isRootNode = true,
-): string {
-  if (Array.isArray(inputObject)) {
-    throw new Error("Arrays are not allowed as input");
+export function objectToTree(input: TreeObject): string {
+  if (!isPlainObject(input)) {
+    throw new TypeError("Input must be a plain object");
   }
 
-  if (typeof inputObject !== "object" || inputObject === null) {
-    throw new Error("Input object must be a non-null object");
+  const ancestors = new Set<object>([input]);
+
+  function render(node: TreeObject, prefix: string, path: string, isRoot: boolean): string {
+    const keys = Object.keys(node);
+
+    return keys
+      .map((key, index) => {
+        const isLast = index === keys.length - 1;
+        const value: unknown = node[key];
+        const keyPath = appendKey(path, key);
+        const line = `${isRoot ? key : `${prefix}${isLast ? "└── " : "├── "}${key}`}\n`;
+
+        if (value === null) {
+          return line;
+        }
+
+        if (!isPlainObject(value)) {
+          throw new TypeError(`Value for key '${keyPath}' must be a plain object or null`);
+        }
+
+        if (ancestors.has(value)) {
+          throw new TypeError(`Circular reference at key '${keyPath}'`);
+        }
+
+        ancestors.add(value);
+        const childPrefix = isRoot ? "" : prefix + (isLast ? "    " : "│   ");
+        const children = render(value, childPrefix, keyPath, false);
+        ancestors.delete(value);
+
+        return line + children;
+      })
+      .join("");
   }
 
-  let tree = "";
-  const currentKeys = Object.keys(inputObject);
+  return render(input, "", "", true);
+}
 
-  currentKeys.forEach((key, index) => {
-    const isLast = index === currentKeys.length - 1;
+function appendKey(path: string, key: string): string {
+  if (!/^[A-Za-z_$][\w$]*$/.test(key)) {
+    return `${path}[${JSON.stringify(key)}]`;
+  }
+  return path ? `${path}.${key}` : key;
+}
 
-    tree += `${linePrefix}${isRootNode ? "" : isLast ? "└── " : "├── "}${key}\n`;
-
-    if (inputObject[key] !== null && typeof inputObject[key] === "object") {
-      let childPrefix = isRootNode
-        ? linePrefix
-        : linePrefix + (isLast ? "    " : "│   ");
-
-      try {
-        tree += objectToTree(inputObject[key], childPrefix, false);
-      } catch (error) {
-        throw new Error(
-          `Error processing key '${key}': ${(error as Error).message}`,
-        );
-      }
-    } else if (inputObject[key] !== null) {
-      throw new Error(
-        `Value for key '${key}' must be either an object or null`,
-      );
-    }
-  });
-
-  return tree;
-};
+function isPlainObject(value: unknown): value is TreeObject {
+  return Object.prototype.toString.call(value) === "[object Object]";
+}
