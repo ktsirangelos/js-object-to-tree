@@ -192,13 +192,19 @@ test("allows the same object in two branches (not a cycle)", () => {
 `);
 });
 
-test("renders class instances by their own enumerable fields", () => {
+test("throws for class instances", () => {
   class Box {
     inner = null;
   }
 
-  expect(objectToTree({ root: new Box() } as unknown as TreeObject)).toBe(`root
-└── inner
+  expectTypeError({ root: new Box() }, "Value for key 'root' must be a plain object or null");
+});
+
+test("renders plain objects with a custom Symbol.toStringTag", () => {
+  const branch = { [Symbol.toStringTag]: "Custom", leaf: null };
+
+  expect(objectToTree({ root: branch })).toBe(`root
+└── leaf
 `);
 });
 

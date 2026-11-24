@@ -48,11 +48,18 @@ console.log(exampleTree);
 
 ## Input Object Format
 
-- The input and every non-`null` value must be a plain object. Anything else (arrays, primitives, `Map`, `Set`, `Date`, ...) throws a `TypeError`. For nested values the message names the key path, e.g. `Value for key 'a.b' must be a plain object or null`; keys that aren't identifiers are bracketed, e.g. `a["b.c"]`.
+- The input and every non-`null` value must be a plain object: its prototype is `Object.prototype` or `null` (object literals, `Object.create(null)`). Anything else (arrays, primitives, class instances, `Map`, `Set`, `Date`, ...) throws a `TypeError`. Objects created in another realm (an iframe, Node's `vm`) have a different `Object.prototype` and are rejected too. For nested values the message names the key path, e.g. `Value for key 'a.b' must be a plain object or null`; keys that aren't identifiers are bracketed, e.g. `a["b.c"]`.
 - Circular references throw `Circular reference at key 'a.self'`.
 - Keys appear in `Object.keys` order.
 - Keys are printed as-is, so sanitize untrusted input.
 - Each line ends in `\n`, and `{}` returns `""`.
+
+## Upgrading from 1.x
+
+- `objectToTree` takes a single argument. The `linePrefix` and `isRootNode` parameters are gone, and extra arguments are ignored, so `objectToTree(obj, "  ", false)` now returns the same output as `objectToTree(obj)`.
+- Class instances and built-ins such as `Map`, `Set` and `Date` now throw instead of rendering their enumerable fields.
+- Errors are `TypeError`s with a key-path message, e.g. `Value for key 'a.b' must be a plain object or null`, instead of `Error`s wrapped in `Error processing key '...'`.
+- Circular references throw a `TypeError` instead of overflowing the stack.
 
 ## Information
 

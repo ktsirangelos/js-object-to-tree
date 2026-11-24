@@ -15,34 +15,34 @@ export function objectToTree(input: TreeObject): string {
 
   function render(node: TreeObject, prefix: string, path: string, isRoot: boolean): string {
     const keys = Object.keys(node);
+    let out = "";
 
-    return keys
-      .map((key, index) => {
-        const isLast = index === keys.length - 1;
-        const value: unknown = node[key];
-        const keyPath = appendKey(path, key);
-        const line = `${isRoot ? key : `${prefix}${isLast ? "└── " : "├── "}${key}`}\n`;
+    for (let index = 0; index < keys.length; index++) {
+      const key = keys[index];
+      const isLast = index === keys.length - 1;
+      const value: unknown = node[key];
+      const keyPath = appendKey(path, key);
+      out += `${isRoot ? key : `${prefix}${isLast ? "└── " : "├── "}${key}`}\n`;
 
-        if (value === null) {
-          return line;
-        }
+      if (value === null) {
+        continue;
+      }
 
-        if (!isPlainObject(value)) {
-          throw new TypeError(`Value for key '${keyPath}' must be a plain object or null`);
-        }
+      if (!isPlainObject(value)) {
+        throw new TypeError(`Value for key '${keyPath}' must be a plain object or null`);
+      }
 
-        if (ancestors.has(value)) {
-          throw new TypeError(`Circular reference at key '${keyPath}'`);
-        }
+      if (ancestors.has(value)) {
+        throw new TypeError(`Circular reference at key '${keyPath}'`);
+      }
 
-        ancestors.add(value);
-        const childPrefix = isRoot ? "" : prefix + (isLast ? "    " : "│   ");
-        const children = render(value, childPrefix, keyPath, false);
-        ancestors.delete(value);
+      ancestors.add(value);
+      const childPrefix = isRoot ? "" : prefix + (isLast ? "    " : "│   ");
+      out += render(value, childPrefix, keyPath, false);
+      ancestors.delete(value);
+    }
 
-        return line + children;
-      })
-      .join("");
+    return out;
   }
 
   return render(input, "", "", true);
@@ -56,5 +56,9 @@ function appendKey(path: string, key: string): string {
 }
 
 function isPlainObject(value: unknown): value is TreeObject {
-  return Object.prototype.toString.call(value) === "[object Object]";
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
 }
